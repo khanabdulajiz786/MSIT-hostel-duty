@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostel Duty System</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+padding:20px;
+}
+
+.container{
+max-width:1400px;
+margin:auto;
+background:#1e293b;
+padding:20px;
+border-radius:20px;
+}
+
+input,button{
+padding:12px;
+margin:5px;
+border:none;
+border-radius:10px;
+}
+
+button{
+background:#0ea5e9;
+color:white;
+cursor:pointer;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+border:1px solid #334155;
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#0284c7;
+}
+
+.present{
+background:green;
+}
+
+.absent{
+background:red;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>🍽 Hostel Duty System</h1>
+
+<input type="text" id="studentName" placeholder="Student Name">
+
+<input type="number" id="previousNormal" placeholder="Previous Normal">
+
+<input type="number" id="previousFish" placeholder="Previous Fish">
+
+<input type="number" id="previousBazar" placeholder="Previous Bazar">
+
+<input type="date" id="dutyDate">
+
+<button onclick="addStudent()">
+Add Student
+</button>
+
+<button onclick="generateDuty()">
+Generate Duty
+</button>
+
+<button onclick="window.print()">
+Print
+</button>
+
+<h2>Students</h2>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Normal</th>
+<th>Fish</th>
+<th>Bazar</th>
+<th>Total</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="studentTable"></tbody>
+</table>
+
+<h2>Duty History</h2>
+
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Duty 1</th>
+<th>Duty 2</th>
+<th>Bazar 1</th>
+<th>Bazar 2</th>
+<th>Date</th>
+<th>Day</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody id="historyTable"></tbody>
+</table>
+
+</div>
+
+<script>
+
+const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "YOUR_DOMAIN",
+projectId: "YOUR_PROJECT_ID",
+storageBucket: "YOUR_BUCKET",
+messagingSenderId: "YOUR_ID",
+appId: "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+let students = [];
+let dutyHistory = [];
+
+function sortBy(type,list){
+
+list.sort((a,b)=>{
+
+if(type==="normal"){
+
+if(a.normal===b.normal){
+return a.total-b.total;
+}
+
+return a.normal-b.normal;
+
+}
+
+if(type==="fish"){
+
+if(a.fish===b.fish){
+return a.total-b.total;
+}
+
+return a.fish-b.fish;
+
+}
+
+if(type==="bazar"){
+
+if(a.bazar===b.bazar){
+return a.total-b.total;
+}
+
+return a.bazar-b.bazar;
+
+}
+
+});
+
+}
+
+async function saveStudents(){
+
+await db.collection("hostel")
+.doc("students")
+.set({
+
+data:students
+
+});
+
+}
+
+async function saveHistory(){
+
+await db.collection("hostel")
+.doc("history")
+.set({
+
+data:dutyHistory
+
+});
+
+}
+
+function realtimeSync(){
+
+db.collection("hostel")
+.doc("students")
+.onSnapshot((doc)=>{
+
+if(doc.exists){
+
+students = doc.data().data || [];
+
+showStudents();
+
+}
+
+});
+
+
+
+db.collection("hostel")
+.doc("history")
+.onSnapshot((doc)=>{
+
+if(doc.exists){
+
+dutyHistory = doc.data().data || [];
+
+showHistory();
+
+}
+
+});
+
+}
+
+async function addStudent(){
+
+let name =
+document.getElementById("studentName")
+.value.trim();
+
+let normal = Number(
+document.getElementById("previousNormal")
+.value
+) || 0;
+
+let fish = Number(
+document.getElementById("previousFish")
+.value
+) || 0;
+
+let bazar = Number(
+document.getElementById("previousBazar")
+.value
+) || 0;
+
+if(name===""){
+alert("Enter name");
+return;
+}
+
+let exempt = confirm(
+"Medical exempt from fish/bazar?"
+);
+
+students.push({
+
+name:name,
+normal:normal,
+fish:fish,
+bazar:bazar,
+total:normal+fish+bazar,
+present:true,
+noFishDuty:exempt
+
+});
+
+await saveStudents();
+
+clearInputs();
+
+}
+
+function clearInputs(){
+
+studentName.value="";
+previousNormal.value="";
+previousFish.value="";
+previousBazar.value="";
+
+}
+
+function togglePresence(index){
+
+students[index].present =
+!students[index].present;
+
+saveStudents();
+
+}
+
+function deleteStudent(index){
+
+students.splice(index,1);
+
+saveStudents();
+
+}
+
+function showStudents(){
+
+let table =
+document.getElementById("studentTable");
+
+table.innerHTML = "";
+
+students.forEach((s,index)=>{
+
+table.innerHTML += `
+
+<tr>
+<td>${s.name}</td>
+<td>${s.normal}</td>
+<td>${s.fish}</td>
+<td>${s.bazar}</td>
+<td>${s.total}</td>
+<td>
+<button
+class="${s.present?'present':'absent'}"
+onclick="togglePresence(${index})">
+${s.present?'Present':'Absent'}
+</button>
+</td>
+<td>
+<button onclick="deleteStudent(${index})">
+Delete
+</button>
+</td>
+</tr>
+
+`;
+
+});
+
+}
+
+async function generateDuty(){
+
+let dateValue =
+document.getElementById("dutyDate")
+.value;
+
+if(dateValue===""){
+alert("Select date");
+return;
+}
+
+let date = new Date(dateValue);
+
+let day =
+date.toLocaleDateString(
+'en-US',
+{weekday:'long'}
+);
+
+let fishDay =
+(
+day==="Tuesday"
+||
+day==="Saturday"
+);
+
+let presentStudents =
+students.filter(s=>s.present);
+
+if(presentStudents.length===0){
+alert("No students present");
+return;
+}
+
+let bazar1 = null;
+let bazar2 = null;
+
+if(fishDay){
+
+let bazarEligible =
+presentStudents.filter(
+s=>!s.noFishDuty
+);
+
+sortBy("bazar",bazarEligible);
+
+bazar1 = bazarEligible[0] || null;
+bazar2 = bazarEligible[1] || null;
+
+if(bazar1){
+bazar1.bazar += 1;
+bazar1.total += 1;
+}
+
+if(bazar2){
+bazar2.bazar += 1;
+bazar2.total += 1;
+}
+
+}
+
+let dutyEligible = [];
+
+if(fishDay){
+
+let nonBazar =
+presentStudents.filter(student=>{
+
+return (
+student!==bazar1
+&&
+student!==bazar2
+);
+
+});
+
+if(nonBazar.length>=2){
+
+dutyEligible = nonBazar;
+
+}else if(nonBazar.length===1){
+
+let remainingBazar =
+[bazar1,bazar2].filter(Boolean);
+
+sortBy("normal",remainingBazar);
+
+
+dutyEligible = [
+nonBazar[0],
+remainingBazar[0]
+];
+
+}else{
+
+if(bazar1)
+dutyEligible.push(bazar1);
+
+if(bazar2)
+dutyEligible.push(bazar2);
+
+}
+
+}else{
+
+dutyEligible = [...presentStudents];
+
+}
+
+sortBy("normal",dutyEligible);
+
+let person1 = dutyEligible[0] || null;
+let person2 = dutyEligible[1] || null;
+
+if(person1){
+person1.normal += 1;
+person1.total += 1;
+}
+
+if(person2){
+person2.normal += 1;
+person2.total += 1;
+}
+
+if(person1 && !person2){
+person1.normal += 1;
+person1.total += 1;
+}
+
+if(fishDay){
+
+if(person1)
+person1.fish += 1;
+
+if(person2)
+person2.fish += 1;
+
+}
+
+
+dutyHistory.push({
+
+no:dutyHistory.length+1,
+
+duty1:person1?person1.name:'-',
+
+duty2:person2?person2.name:'Single Duty',
+
+bazar1:bazar1?bazar1.name:'-',
+
+bazar2:bazar2?bazar2.name:'-',
+
+
+date:date.toLocaleDateString(),
+
+day:day,
+
+type:fishDay?
+"Fish+Bazar":"Normal"
+
+});
+
+await saveStudents();
+await saveHistory();
+
+}
+
+function whatsappShare(index){
+
+let d = dutyHistory[index];
+
+let message = `
+📅 Date: ${d.date}
+
+🍽 Duty:
+${d.duty1}
+&
+${d.duty2}
+
+🛒 Bazar:
+${d.bazar1}
+&
+${d.bazar2}
+`;
+
+window.open(
+`https://wa.me/?text=${encodeURIComponent(message)}`
+);
+
+}
+
+function showHistory(){
+
+let table =
+document.getElementById("historyTable");
+
+table.innerHTML = "";
+
+
+dutyHistory.forEach((d,index)=>{
+
+
+table.innerHTML += `
+
+<tr>
+<td>${d.no}</td>
+<td>${d.duty1}</td>
+<td>${d.duty2}</td>
+<td>${d.bazar1}</td>
+<td>${d.bazar2}</td>
+<td>${d.date}</td>
+<td>${d.day}</td>
+<td>
+<button
+onclick="whatsappShare(${index})">
+Share
+</button>
+</td>
+</tr>
+
+`;
+
+});
+
+}
+
+realtimeSync();
+
+</script>
+
+</body>
+</html>
