@@ -213,7 +213,13 @@ font-size:12px;
 <div class="note">
 ✅ Tuesday & Saturday = Fish + Bazar Day <br>
 ✅ Exempt students never get Fish/Bazar duty <br>
+✅ Previous Normal/Fish/Bazar count supported <br>
+✅ Present/Absent system supported <br>
+✅ Fish/Bazar exempt system supported <br>
 ✅ Exchange duty supported <br>
+✅ Smart balancing supported <br>
+✅ Auto next date supported <br>
+✅ Single duty double count supported <br>
 ✅ WhatsApp share + Print supported
 </div>
 
@@ -261,6 +267,21 @@ present:true
 });
 
 saveData();
+let savedLastDate = localStorage.getItem("lastDutyDate");
+
+if(savedLastDate){
+
+let nextDate = new Date(savedLastDate);
+nextDate.setDate(nextDate.getDate()+1);
+
+document.getElementById("dutyDate").valueAsDate = nextDate;
+
+}else{
+
+document.getElementById("dutyDate").valueAsDate = new Date();
+
+}
+
 showRecords();
 
 }
