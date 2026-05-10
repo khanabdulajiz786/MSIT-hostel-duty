@@ -305,6 +305,7 @@ Ready...
 <div class="note">
 
 ✅ Tuesday & Saturday = Fish + Bazar Day <br>
+✅ Exempt students never get Fish/Bazar duty <br>
 ✅ Bazar students cannot get same day duty unless required <br>
 ✅ If only 1 student available → single duty with 2 counts <br>
 ✅ Normal, Fish & Bazar separate counts <br>
@@ -673,6 +674,11 @@ student !== bazar2
 
 });
 
+nonBazarStudents =
+nonBazarStudents.filter(
+s => !s.noFishDuty
+);
+
 if(nonBazarStudents.length >= 2){
 
 dutyEligible = nonBazarStudents;
@@ -680,7 +686,11 @@ dutyEligible = nonBazarStudents;
 }else if(nonBazarStudents.length === 1){
 
 let remainingBazar =
-[bazar1,bazar2].filter(Boolean);
+[bazar1,bazar2]
+.filter(Boolean)
+.filter(
+s => !s.noFishDuty
+);
 
 sortByDuty(
 "normal",
@@ -699,17 +709,18 @@ remainingBazar[0]
 
 dutyEligible = [];
 
-if(bazar1)
+if(bazar1 && !bazar1.noFishDuty)
 dutyEligible.push(bazar1);
 
-if(bazar2)
+if(bazar2 && !bazar2.noFishDuty)
 dutyEligible.push(bazar2);
 
 }
 
 }else{
 
-dutyEligible = [...presentStudents];
+dutyEligible =
+[...presentStudents];
 
 }
 
@@ -747,13 +758,13 @@ person1.total += 1;
 
 if(isFishDay){
 
-if(person1){
+if(person1 && !person1.noFishDuty){
 
 person1.fish += 1;
 
 }
 
-if(person2){
+if(person2 && !person2.noFishDuty){
 
 person2.fish += 1;
 
