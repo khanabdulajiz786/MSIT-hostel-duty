@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ultimate Hostel Duty System</title>
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Ultimate Hostel Duty System
+</title>
 
 <style>
 
@@ -180,19 +186,24 @@ padding:8px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>🍽 Ultimate Hostel Duty System</h1>
+<h1>
+🍽 Ultimate Hostel Duty System
+</h1>
 
 <div class="top">
 
 <div class="box">
 
-<label>Student Name</label>
+<label>
+Student Name
+</label>
 
 <input
 type="text"
@@ -203,7 +214,9 @@ placeholder="Enter name">
 
 <div class="box">
 
-<label>Previous Normal Duty</label>
+<label>
+Previous Normal Duty
+</label>
 
 <input
 type="number"
@@ -214,7 +227,9 @@ placeholder="0">
 
 <div class="box">
 
-<label>Previous Fish Duty</label>
+<label>
+Previous Fish Duty
+</label>
 
 <input
 type="number"
@@ -225,7 +240,9 @@ placeholder="0">
 
 <div class="box">
 
-<label>Previous Bazar Duty</label>
+<label>
+Previous Bazar Duty
+</label>
 
 <input
 type="number"
@@ -236,7 +253,9 @@ placeholder="0">
 
 <div class="box">
 
-<label>Duty Date</label>
+<label>
+Duty Date
+</label>
 
 <input
 type="date"
@@ -246,7 +265,9 @@ id="dutyDate">
 
 <div class="box">
 
-<label>Add Student</label>
+<label>
+Add Student
+</label>
 
 <button
 class="addBtn"
@@ -260,7 +281,9 @@ Add Student
 
 </div>
 
-<h2>👨‍🍳 Student Record</h2>
+<h2>
+👨‍🍳 Student Record
+</h2>
 
 <table>
 
@@ -319,7 +342,9 @@ Backup Data
 </button>
 
 <h2 style="margin-top:30px;">
+
 📅 Duty Schedule
+
 </h2>
 
 <table>
@@ -358,17 +383,173 @@ Ready...
 <div class="note">
 
 ✅ Tuesday & Saturday = Fish + Bazar Day <br>
-✅ Exempt students never get Fish/Bazar duty <br>
+
+✅ Exempt students never get Fish duty only <br>
+
+✅ Bazar duty allowed for all students <br>
+
 ✅ Bazar students cannot get same day duty unless required <br>
+
 ✅ If only 1 student available → single duty with 2 counts <br>
+
 ✅ Normal, Fish & Bazar separate counts <br>
+
 ✅ Smart equal balancing system <br>
+
 ✅ Exchange duty supported <br>
+
 ✅ WhatsApp share + Backup + Print supported
 
 </div>
 
 </div>
+
+
+
+<!-- LOGIN SCRIPT -->
+
+<script>
+
+const SYSTEM_USERNAME = "msit2026";
+
+const SYSTEM_PASSWORD = "Msit@2026";
+
+function showLoginPage(){
+
+document.body.innerHTML = `
+
+<div style="
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+font-family:Arial;
+padding:20px;
+">
+
+<div style="
+width:100%;
+max-width:400px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:25px;
+color:white;
+">
+
+<h1 style="
+text-align:center;
+margin-bottom:25px;
+color:#38bdf8;
+">
+
+🔐 Hostel Duty Login
+
+</h1>
+
+<input
+type="text"
+id="loginUser"
+placeholder="Enter Username"
+style="
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:12px;
+font-size:16px;
+">
+
+<input
+type="password"
+id="loginPass"
+placeholder="Enter Password"
+style="
+width:100%;
+padding:14px;
+margin-bottom:20px;
+border:none;
+border-radius:12px;
+font-size:16px;
+">
+
+<button
+onclick="checkLogin()"
+style="
+width:100%;
+padding:14px;
+background:#0ea5e9;
+border:none;
+border-radius:12px;
+color:white;
+font-size:16px;
+cursor:pointer;
+">
+
+Login
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+function checkLogin(){
+
+let user =
+document.getElementById("loginUser").value;
+
+let pass =
+document.getElementById("loginPass").value;
+
+if(
+user==="msit2026"
+&&
+pass==="Msit@2026"
+){
+
+sessionStorage.setItem(
+"hostelLoggedIn",
+"true"
+);
+
+location.reload();
+
+}
+
+else{
+
+alert(
+"Wrong Username or Password"
+);
+
+}
+
+}
+
+if(
+sessionStorage.getItem("hostelLoggedIn")
+!== "true"
+){
+
+showLoginPage();
+
+throw new Error(
+"Login Required"
+);
+
+}
+
+</script>
+
+
+
+<!-- MAIN SCRIPT -->
 
 <script>
 
@@ -404,20 +585,17 @@ document.getElementById("studentName")
 
 let previousNormal =
 Number(
-document.getElementById("previousNormal")
-.value
+document.getElementById("previousNormal").value
 ) || 0;
 
 let previousFish =
 Number(
-document.getElementById("previousFish")
-.value
+document.getElementById("previousFish").value
 ) || 0;
 
 let previousBazar =
 Number(
-document.getElementById("previousBazar")
-.value
+document.getElementById("previousBazar").value
 ) || 0;
 
 if(name===""){
@@ -446,7 +624,7 @@ return;
 
 let noFishDuty =
 confirm(
-"Medical exempt from Fish/Bazar?"
+"Medical exempt from Fish Duty?"
 );
 
 students.push({
@@ -533,7 +711,7 @@ table.innerHTML += `
 ${
 student.noFishDuty
 ?
-"🚫 Exempt"
+"🚫 Fish Exempt"
 :
 "✅ Allowed"
 }
@@ -631,8 +809,7 @@ return scoreA-scoreB;
 function generateDuty(){
 
 let dateInput =
-document.getElementById("dutyDate")
-.value;
+document.getElementById("dutyDate").value;
 
 if(dateInput===""){
 
@@ -677,9 +854,7 @@ let bazar2 = null;
 if(isFishDay){
 
 let bazarEligible =
-presentStudents.filter(
-s => !s.noFishDuty
-);
+presentStudents;
 
 sortByDuty(
 "bazar",
@@ -687,6 +862,7 @@ bazarEligible
 );
 
 bazar1 = bazarEligible[0] || null;
+
 bazar2 = bazarEligible[1] || null;
 
 if(bazar1){
@@ -984,7 +1160,9 @@ let duty =
 dutyHistory[index];
 
 let availableStudents =
-students.filter(s=>s.present);
+students.filter(
+s=>s.present
+);
 
 let currentPersons = [
 
@@ -1203,7 +1381,9 @@ a.click();
 function resetAllData(){
 
 let confirmReset =
-confirm("Delete all data?");
+confirm(
+"Delete all data?"
+);
 
 if(confirmReset){
 
@@ -1220,6 +1400,7 @@ localStorage.removeItem(
 );
 
 students = [];
+
 dutyHistory = [];
 
 showRecords();
@@ -1229,7 +1410,9 @@ showRecords();
 }
 
 let savedLastDate =
-localStorage.getItem("lastDutyDate");
+localStorage.getItem(
+"lastDutyDate"
+);
 
 if(savedLastDate){
 
@@ -1253,157 +1436,6 @@ document.getElementById("dutyDate")
 }
 
 showRecords();
-
-</script>
-
-<!-- LOGIN SCRIPT -->
-
-<script>
-
-const SYSTEM_USERNAME = "msit2026";
-const SYSTEM_PASSWORD = "Msit@2026";
-
-function showLoginPage(){
-
-document.body.innerHTML = `
-
-<div style="
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(135deg,#0f172a,#1e293b);
-font-family:Arial;
-padding:20px;
-">
-
-<div style="
-width:100%;
-max-width:400px;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(10px);
-padding:30px;
-border-radius:25px;
-color:white;
-">
-
-<h1 style="
-text-align:center;
-margin-bottom:25px;
-color:#38bdf8;
-">
-
-🔐 Hostel Duty Login
-
-</h1>
-
-<input
-type="text"
-id="loginUser"
-placeholder="Enter Username"
-style="
-width:100%;
-padding:14px;
-margin-bottom:15px;
-border:none;
-border-radius:12px;
-font-size:16px;
-">
-
-<input
-type="password"
-id="loginPass"
-placeholder="Enter Password"
-style="
-width:100%;
-padding:14px;
-margin-bottom:20px;
-border:none;
-border-radius:12px;
-font-size:16px;
-">
-
-<button
-onclick="checkLogin()"
-style="
-width:100%;
-padding:14px;
-background:#0ea5e9;
-border:none;
-border-radius:12px;
-color:white;
-font-size:16px;
-cursor:pointer;
-">
-
-Login
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}
-
-function checkLogin(){
-
-let user =
-document.getElementById("loginUser").value;
-
-let pass =
-document.getElementById("loginPass").value;
-
-if(
-user==="msit2026"
-&&
-pass==="Msit@2026"
-){
-
-sessionStorage.setItem(
-"hostelLoggedIn",
-"true"
-);
-
-location.reload();
-
-}
-
-else{
-
-alert("Wrong Username or Password");
-
-}
-
-}
-
-if(
-sessionStorage.getItem("hostelLoggedIn")
-!== "true"
-){
-
-showLoginPage();
-
-throw new Error("Login Required");
-
-}
-
-</script>
-
-
-
-<!-- YOUR MAIN SCRIPT -->
-
-<script>
-
-let students =
-JSON.parse(
-localStorage.getItem("hostelStudents")
-) || [];
-
-/* remaining code */
 
 </script>
 
