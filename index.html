@@ -3,63 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hostel Duty System</title>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<title>Ultimate Hostel Duty System</title>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
 body{
-font-family:Arial;
-background:#0f172a;
+background:linear-gradient(135deg,#0f172a,#1e293b);
 color:white;
 padding:20px;
 }
 
 .container{
-max-width:1400px;
+max-width:1800px;
 margin:auto;
-background:#1e293b;
-padding:20px;
-border-radius:20px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+border-radius:25px;
+padding:25px;
 }
 
-input,button{
+h1,h2{
+text-align:center;
+margin-bottom:20px;
+color:#38bdf8;
+}
+
+.top{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:15px;
+}
+
+.box{
+background:rgba(255,255,255,0.05);
+padding:15px;
+border-radius:15px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+}
+
+input{
+width:100%;
 padding:12px;
-margin:5px;
 border:none;
 border-radius:10px;
 }
 
 button{
-background:#0ea5e9;
-color:white;
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
 cursor:pointer;
+color:white;
+font-size:15px;
 }
+
+.addBtn{background:#0ea5e9;}
+.generateBtn{background:#16a34a;margin-top:20px;}
+.printBtn{background:#9333ea;margin-top:10px;}
+.resetBtn{background:red;margin-top:10px;}
+
+.present{background:#16a34a;}
+.absent{background:red;}
+.deleteBtn{background:red;}
 
 table{
 width:100%;
-border-collapse:collapse;
 margin-top:20px;
+border-collapse:collapse;
 }
 
-th,td{
-border:1px solid #334155;
+th{
+background:#0ea5e9;
+padding:12px;
+}
+
+td{
+background:rgba(255,255,255,0.05);
 padding:10px;
 text-align:center;
 }
 
-th{
-background:#0284c7;
+.fish{
+color:#facc15;
+font-weight:bold;
 }
 
-.present{
-background:green;
+.normal{
+color:#86efac;
+font-weight:bold;
 }
 
-.absent{
-background:red;
+.bazar{
+color:#fb923c;
+font-weight:bold;
+}
+
+.summary{
+margin-top:20px;
+background:rgba(14,165,233,0.15);
+padding:20px;
+border-radius:15px;
+}
+
+.note{
+margin-top:20px;
+background:rgba(250,204,21,0.1);
+padding:15px;
+border-radius:12px;
+line-height:1.8;
+color:#fde68a;
+}
+
+@media(max-width:1200px){
+
+.top{
+grid-template-columns:1fr;
+}
+
+table{
+font-size:12px;
+}
+
 }
 
 </style>
@@ -68,103 +144,416 @@ background:red;
 
 <div class="container">
 
-<h1>🍽 Hostel Duty System</h1>
+<h1>🍽 Ultimate Hostel Duty System</h1>
 
-<input type="text" id="studentName" placeholder="Student Name">
+<div class="top">
 
-<input type="number" id="previousNormal" placeholder="Previous Normal">
+<div class="box">
 
-<input type="number" id="previousFish" placeholder="Previous Fish">
+<label>Student Name</label>
 
-<input type="number" id="previousBazar" placeholder="Previous Bazar">
+<input
+type="text"
+id="studentName"
+placeholder="Enter name">
 
-<input type="date" id="dutyDate">
+</div>
 
-<button onclick="addStudent()">
+<div class="box">
+
+<label>Previous Normal Duty</label>
+
+<input
+type="number"
+id="previousNormal"
+placeholder="0">
+
+</div>
+
+<div class="box">
+
+<label>Previous Fish Duty</label>
+
+<input
+type="number"
+id="previousFish"
+placeholder="0">
+
+</div>
+
+<div class="box">
+
+<label>Previous Bazar Duty</label>
+
+<input
+type="number"
+id="previousBazar"
+placeholder="0">
+
+</div>
+
+<div class="box">
+
+<label>Duty Date</label>
+
+<input
+type="date"
+id="dutyDate">
+
+</div>
+
+<div class="box">
+
+<label>Add Student</label>
+
+<button
+class="addBtn"
+onclick="addStudent()">
+
 Add Student
+
 </button>
 
-<button onclick="generateDuty()">
-Generate Duty
-</button>
+</div>
 
-<button onclick="window.print()">
-Print
-</button>
+</div>
 
-<h2>Students</h2>
+<h2>👨‍🍳 Student Record</h2>
 
 <table>
+
 <thead>
+
 <tr>
+
+<th>SL</th>
 <th>Name</th>
 <th>Normal</th>
 <th>Fish</th>
 <th>Bazar</th>
 <th>Total</th>
-<th>Status</th>
-<th>Action</th>
+<th>Fish Status</th>
+<th>Present</th>
+<th>Delete</th>
+
 </tr>
+
 </thead>
-<tbody id="studentTable"></tbody>
+
+<tbody id="recordTable"></tbody>
+
 </table>
 
-<h2>Duty History</h2>
+<button
+class="generateBtn"
+onclick="generateDuty()">
+
+Generate Duty
+
+</button>
+
+<button
+class="printBtn"
+onclick="window.print()">
+
+Print Duty
+
+</button>
+
+<button
+class="resetBtn"
+onclick="resetAllData()">
+
+Reset All Data
+
+</button>
+
+<h2 style="margin-top:30px;">
+📅 Duty Schedule
+</h2>
 
 <table>
+
 <thead>
+
 <tr>
+
 <th>No</th>
-<th>Duty 1</th>
-<th>Duty 2</th>
-<th>Bazar 1</th>
-<th>Bazar 2</th>
+<th>Duty Student 1</th>
+<th>Duty Student 2</th>
+<th>Bazar Student 1</th>
+<th>Bazar Student 2</th>
 <th>Date</th>
 <th>Day</th>
-<th>Share</th>
+<th>Type</th>
+<th>WhatsApp</th>
+
 </tr>
+
 </thead>
-<tbody id="historyTable"></tbody>
+
+<tbody id="dutyTable"></tbody>
+
 </table>
+
+<div class="summary" id="summary">
+
+Ready...
+
+</div>
+
+<div class="note">
+
+✅ Tuesday & Saturday = Fish + Bazar Day <br>
+✅ Bazar students cannot get same day duty unless required <br>
+✅ If only 1 student available → single duty with 2 counts <br>
+✅ Normal, Fish & Bazar separate counts <br>
+✅ Smart equal balancing system <br>
+✅ WhatsApp share + Print supported
+
+</div>
 
 </div>
 
 <script>
 
-const firebaseConfig = {
-apiKey: "YOUR_API_KEY",
-authDomain: "YOUR_DOMAIN",
-projectId: "YOUR_PROJECT_ID",
-storageBucket: "YOUR_BUCKET",
-messagingSenderId: "YOUR_ID",
-appId: "YOUR_APP_ID"
-};
+let students =
+JSON.parse(
+localStorage.getItem("hostelStudents")
+) || [];
 
-firebase.initializeApp(firebaseConfig);
+let dutyHistory =
+JSON.parse(
+localStorage.getItem("hostelDutyHistory")
+) || [];
 
-const db = firebase.firestore();
+function saveData(){
 
-let students = [];
-let dutyHistory = [];
+localStorage.setItem(
+"hostelStudents",
+JSON.stringify(students)
+);
 
-function sortBy(type,list){
+localStorage.setItem(
+"hostelDutyHistory",
+JSON.stringify(dutyHistory)
+);
+
+}
+
+function addStudent(){
+
+let name =
+document.getElementById("studentName")
+.value.trim();
+
+let previousNormal =
+Number(
+document.getElementById("previousNormal")
+.value
+) || 0;
+
+let previousFish =
+Number(
+document.getElementById("previousFish")
+.value
+) || 0;
+
+let previousBazar =
+Number(
+document.getElementById("previousBazar")
+.value
+) || 0;
+
+if(name===""){
+
+alert("Enter student name");
+
+return;
+
+}
+
+let alreadyExists = students.some(
+s =>
+s.name.toLowerCase()
+===
+name.toLowerCase()
+);
+
+if(alreadyExists){
+
+alert("Student already exists");
+
+return;
+
+}
+
+let noFishDuty =
+confirm(
+"Medical exempt from Fish/Bazar?"
+);
+
+students.push({
+
+name:name,
+
+normal:previousNormal,
+
+fish:previousFish,
+
+bazar:previousBazar,
+
+total:
+previousNormal
++
+previousFish
++
+previousBazar,
+
+noFishDuty:noFishDuty,
+
+present:true
+
+});
+
+document.getElementById("studentName")
+.value="";
+
+document.getElementById("previousNormal")
+.value="";
+
+document.getElementById("previousFish")
+.value="";
+
+document.getElementById("previousBazar")
+.value="";
+
+saveData();
+
+showRecords();
+
+}
+
+function togglePresence(index){
+
+students[index].present =
+!students[index].present;
+
+saveData();
+
+showRecords();
+
+}
+
+function removeStudent(index){
+
+students.splice(index,1);
+
+saveData();
+
+showRecords();
+
+}
+
+function showRecords(){
+
+let table =
+document.getElementById("recordTable");
+
+table.innerHTML="";
+
+students.forEach((student,index)=>{
+
+table.innerHTML += `
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${student.name}</td>
+
+<td class="normal">
+${student.normal}
+</td>
+
+<td class="fish">
+${student.fish}
+</td>
+
+<td class="bazar">
+${student.bazar}
+</td>
+
+<td>
+${student.total}
+</td>
+
+<td>
+${
+student.noFishDuty
+?
+"🚫 Exempt"
+:
+"✅ Allowed"
+}
+</td>
+
+<td>
+
+<button
+class="${
+student.present
+?
+'present'
+:
+'absent'
+}"
+onclick="togglePresence(${index})">
+
+${
+student.present
+?
+'Present'
+:
+'Absent'
+}
+
+</button>
+
+</td>
+
+<td>
+
+<button
+class="deleteBtn"
+onclick="removeStudent(${index})">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+showDutyHistory();
+
+}
+
+function sortByDuty(type,list){
 
 list.sort((a,b)=>{
-
-if(type==="normal"){
-
-if(a.normal===b.normal){
-return a.total-b.total;
-}
-
-return a.normal-b.normal;
-
-}
 
 if(type==="fish"){
 
 if(a.fish===b.fish){
+
 return a.total-b.total;
+
 }
 
 return a.fish-b.fish;
@@ -174,280 +563,141 @@ return a.fish-b.fish;
 if(type==="bazar"){
 
 if(a.bazar===b.bazar){
+
 return a.total-b.total;
+
 }
 
 return a.bazar-b.bazar;
 
 }
 
-});
+if(a.normal===b.normal){
+
+return a.total-b.total;
 
 }
 
-async function saveStudents(){
-
-await db.collection("hostel")
-.doc("students")
-.set({
-
-data:students
-
-});
-
-}
-
-async function saveHistory(){
-
-await db.collection("hostel")
-.doc("history")
-.set({
-
-data:dutyHistory
+return a.normal-b.normal;
 
 });
 
 }
 
-function realtimeSync(){
+function generateDuty(){
 
-db.collection("hostel")
-.doc("students")
-.onSnapshot((doc)=>{
-
-if(doc.exists){
-
-students = doc.data().data || [];
-
-showStudents();
-
-}
-
-});
-
-
-
-db.collection("hostel")
-.doc("history")
-.onSnapshot((doc)=>{
-
-if(doc.exists){
-
-dutyHistory = doc.data().data || [];
-
-showHistory();
-
-}
-
-});
-
-}
-
-async function addStudent(){
-
-let name =
-document.getElementById("studentName")
-.value.trim();
-
-let normal = Number(
-document.getElementById("previousNormal")
-.value
-) || 0;
-
-let fish = Number(
-document.getElementById("previousFish")
-.value
-) || 0;
-
-let bazar = Number(
-document.getElementById("previousBazar")
-.value
-) || 0;
-
-if(name===""){
-alert("Enter name");
-return;
-}
-
-let exempt = confirm(
-"Medical exempt from fish/bazar?"
-);
-
-students.push({
-
-name:name,
-normal:normal,
-fish:fish,
-bazar:bazar,
-total:normal+fish+bazar,
-present:true,
-noFishDuty:exempt
-
-});
-
-await saveStudents();
-
-clearInputs();
-
-}
-
-function clearInputs(){
-
-studentName.value="";
-previousNormal.value="";
-previousFish.value="";
-previousBazar.value="";
-
-}
-
-function togglePresence(index){
-
-students[index].present =
-!students[index].present;
-
-saveStudents();
-
-}
-
-function deleteStudent(index){
-
-students.splice(index,1);
-
-saveStudents();
-
-}
-
-function showStudents(){
-
-let table =
-document.getElementById("studentTable");
-
-table.innerHTML = "";
-
-students.forEach((s,index)=>{
-
-table.innerHTML += `
-
-<tr>
-<td>${s.name}</td>
-<td>${s.normal}</td>
-<td>${s.fish}</td>
-<td>${s.bazar}</td>
-<td>${s.total}</td>
-<td>
-<button
-class="${s.present?'present':'absent'}"
-onclick="togglePresence(${index})">
-${s.present?'Present':'Absent'}
-</button>
-</td>
-<td>
-<button onclick="deleteStudent(${index})">
-Delete
-</button>
-</td>
-</tr>
-
-`;
-
-});
-
-}
-
-async function generateDuty(){
-
-let dateValue =
+let dateInput =
 document.getElementById("dutyDate")
 .value;
 
-if(dateValue===""){
+if(dateInput===""){
+
 alert("Select date");
+
 return;
+
 }
 
-let date = new Date(dateValue);
+let selectedDate =
+new Date(dateInput);
 
-let day =
-date.toLocaleDateString(
+let dayName =
+selectedDate.toLocaleDateString(
 'en-US',
 {weekday:'long'}
 );
 
-let fishDay =
+let isFishDay =
 (
-day==="Tuesday"
+dayName==="Tuesday"
 ||
-day==="Saturday"
+dayName==="Saturday"
 );
 
 let presentStudents =
-students.filter(s=>s.present);
+students.filter(
+s => s.present
+);
 
 if(presentStudents.length===0){
+
 alert("No students present");
+
 return;
+
 }
 
 let bazar1 = null;
 let bazar2 = null;
 
-if(fishDay){
+if(isFishDay){
 
 let bazarEligible =
 presentStudents.filter(
-s=>!s.noFishDuty
+s => !s.noFishDuty
 );
 
-sortBy("bazar",bazarEligible);
+sortByDuty("bazar",bazarEligible);
 
 bazar1 = bazarEligible[0] || null;
 bazar2 = bazarEligible[1] || null;
 
 if(bazar1){
+
 bazar1.bazar += 1;
 bazar1.total += 1;
+
 }
 
 if(bazar2){
+
 bazar2.bazar += 1;
 bazar2.total += 1;
+
 }
 
 }
 
 let dutyEligible = [];
 
-if(fishDay){
+if(isFishDay){
 
-let nonBazar =
-presentStudents.filter(student=>{
+let nonBazarStudents =
+presentStudents.filter(student => {
 
 return (
-student!==bazar1
+student !== bazar1
 &&
-student!==bazar2
+student !== bazar2
 );
 
 });
 
-if(nonBazar.length>=2){
+if(nonBazarStudents.length >= 2){
 
-dutyEligible = nonBazar;
+dutyEligible = nonBazarStudents;
 
-}else if(nonBazar.length===1){
+}else if(nonBazarStudents.length === 1){
 
 let remainingBazar =
 [bazar1,bazar2].filter(Boolean);
 
-sortBy("normal",remainingBazar);
-
+sortByDuty(
+"normal",
+remainingBazar
+);
 
 dutyEligible = [
-nonBazar[0],
+
+nonBazarStudents[0],
+
 remainingBazar[0]
+
 ];
 
 }else{
+
+dutyEligible = [];
 
 if(bazar1)
 dutyEligible.push(bazar1);
@@ -463,81 +713,168 @@ dutyEligible = [...presentStudents];
 
 }
 
-sortBy("normal",dutyEligible);
+sortByDuty(
+"normal",
+dutyEligible
+);
 
-let person1 = dutyEligible[0] || null;
-let person2 = dutyEligible[1] || null;
+let person1 =
+dutyEligible[0] || null;
+
+let person2 =
+dutyEligible[1] || null;
 
 if(person1){
+
 person1.normal += 1;
 person1.total += 1;
+
 }
 
 if(person2){
+
 person2.normal += 1;
 person2.total += 1;
+
 }
 
 if(person1 && !person2){
+
 person1.normal += 1;
 person1.total += 1;
+
 }
 
-if(fishDay){
+if(isFishDay){
 
-if(person1)
+if(person1){
+
 person1.fish += 1;
 
-if(person2)
+}
+
+if(person2){
+
 person2.fish += 1;
 
 }
 
+}
+
+let dutyType =
+isFishDay
+?
+"🐟 Fish + Bazar Day"
+:
+"🍛 Normal Duty";
 
 dutyHistory.push({
 
-no:dutyHistory.length+1,
+no:
+dutyHistory.length+1,
 
-duty1:person1?person1.name:'-',
+duty1:
+person1
+?
+person1.name
+:
+"-",
 
-duty2:person2?person2.name:'Single Duty',
+duty2:
+person2
+?
+person2.name
+:
+(
+person1
+?
+"Single Duty"
+:
+"-"
+),
 
-bazar1:bazar1?bazar1.name:'-',
+bazar1:
+bazar1
+?
+bazar1.name
+:
+"-",
 
-bazar2:bazar2?bazar2.name:'-',
+bazar2:
+bazar2
+?
+bazar2.name
+:
+"-",
 
+date:
+selectedDate.toLocaleDateString(),
 
-date:date.toLocaleDateString(),
+day:
+dayName,
 
-day:day,
-
-type:fishDay?
-"Fish+Bazar":"Normal"
+type:dutyType
 
 });
 
-await saveStudents();
-await saveHistory();
+localStorage.setItem(
+"lastDutyDate",
+selectedDate.toISOString()
+);
+
+saveData();
+
+showRecords();
+
+let nextDate =
+new Date(selectedDate);
+
+nextDate.setDate(
+nextDate.getDate()+1
+);
+
+document.getElementById("dutyDate")
+.valueAsDate = nextDate;
 
 }
 
 function whatsappShare(index){
 
-let d = dutyHistory[index];
+let duty =
+dutyHistory[index];
 
-let message = `
-📅 Date: ${d.date}
+let message = "";
 
-🍽 Duty:
-${d.duty1}
-&
-${d.duty2}
+if(
+duty.type.includes("Fish")
+){
+
+message =
+`📅 Date: ${duty.date}
+
+🐟 Fish + Bazar Day
 
 🛒 Bazar:
-${d.bazar1}
+${duty.bazar1}
 &
-${d.bazar2}
-`;
+${duty.bazar2}
+
+🍽 Duty:
+${duty.duty1}
+&
+${duty.duty2}`;
+
+}else{
+
+message =
+`📅 Date: ${duty.date}
+
+🍽 Duty:
+${duty.duty1}
+&
+${duty.duty2}`;
+
+}
 
 window.open(
 `https://wa.me/?text=${encodeURIComponent(message)}`
@@ -545,42 +882,128 @@ window.open(
 
 }
 
-function showHistory(){
+function showDutyHistory(){
 
 let table =
-document.getElementById("historyTable");
+document.getElementById("dutyTable");
 
-table.innerHTML = "";
+table.innerHTML="";
 
-
-dutyHistory.forEach((d,index)=>{
-
+dutyHistory.forEach((duty,index)=>{
 
 table.innerHTML += `
 
 <tr>
-<td>${d.no}</td>
-<td>${d.duty1}</td>
-<td>${d.duty2}</td>
-<td>${d.bazar1}</td>
-<td>${d.bazar2}</td>
-<td>${d.date}</td>
-<td>${d.day}</td>
-<td>
-<button
-onclick="whatsappShare(${index})">
-Share
-</button>
+
+<td>${duty.no}</td>
+
+<td>${duty.duty1}</td>
+
+<td>${duty.duty2}</td>
+
+<td>${duty.bazar1}</td>
+
+<td>${duty.bazar2}</td>
+
+<td>${duty.date}</td>
+
+<td>${duty.day}</td>
+
+<td class="${
+duty.type.includes('Fish')
+?
+'fish'
+:
+'normal'
+}">
+${duty.type}
 </td>
+
+<td>
+
+<button
+onclick="whatsappShare(${index})"
+style="background:#16a34a;">
+
+Share
+
+</button>
+
+</td>
+
 </tr>
 
 `;
 
 });
 
+document.getElementById("summary")
+.innerHTML = `
+
+👨‍🍳 Students:
+${students.length}
+
+<br><br>
+
+📅 Total Duty:
+${dutyHistory.length}
+
+`;
+
 }
 
-realtimeSync();
+function resetAllData(){
+
+let confirmReset =
+confirm("Delete all data?");
+
+if(confirmReset){
+
+localStorage.removeItem(
+"hostelStudents"
+);
+
+localStorage.removeItem(
+"hostelDutyHistory"
+);
+
+localStorage.removeItem(
+"lastDutyDate"
+);
+
+students = [];
+
+dutyHistory = [];
+
+showRecords();
+
+}
+
+}
+
+let savedLastDate =
+localStorage.getItem("lastDutyDate");
+
+if(savedLastDate){
+
+let nextDate =
+new Date(savedLastDate);
+
+nextDate.setDate(
+nextDate.getDate()+1
+);
+
+document.getElementById("dutyDate")
+.valueAsDate = nextDate;
+
+}else{
+
+document.getElementById("dutyDate")
+.valueAsDate = new Date();
+
+}
+
+showRecords();
 
 </script>
 
